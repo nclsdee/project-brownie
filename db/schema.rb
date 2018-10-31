@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_30_172136) do
+ActiveRecord::Schema.define(version: 2018_10_31_113007) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,19 +23,27 @@ ActiveRecord::Schema.define(version: 2018_10_30_172136) do
     t.date "date_of_birth"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "address"
+    t.string "photo"
   end
 
-  create_table "listings", force: :cascade do |t|
+  create_table "items", force: :cascade do |t|
     t.string "title"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "category"
+    t.integer "price"
+    t.bigint "item_id"
+    t.index ["item_id"], name: "index_items_on_item_id"
   end
 
   create_table "messages", force: :cascade do |t|
     t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "reservation_id"
+    t.index ["reservation_id"], name: "index_messages_on_reservation_id"
   end
 
   create_table "reservations", force: :cascade do |t|
@@ -43,6 +51,12 @@ ActiveRecord::Schema.define(version: 2018_10_30_172136) do
     t.date "date_to"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.bigint "host_id"
+    t.bigint "item_id"
+    t.index ["host_id"], name: "index_reservations_on_host_id"
+    t.index ["item_id"], name: "index_reservations_on_item_id"
+    t.index ["user_id"], name: "index_reservations_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -53,6 +67,13 @@ ActiveRecord::Schema.define(version: 2018_10_30_172136) do
     t.date "date_of_birth"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "address"
+    t.string "photo"
   end
 
+  add_foreign_key "items", "items"
+  add_foreign_key "messages", "reservations"
+  add_foreign_key "reservations", "hosts"
+  add_foreign_key "reservations", "items"
+  add_foreign_key "reservations", "users"
 end
